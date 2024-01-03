@@ -4,6 +4,12 @@ let playerX = window.innerWidth / 2;
 let playerY = window.innerHeight / 2;
 let speed = 1;
 let score = 0;
+let skillUsed1 = false;
+let skillUsed2 = false;
+let skillUsed3 = false;
+let activeSkill = null;
+
+
 
 
 
@@ -252,9 +258,28 @@ function removeBlock(block) {
   block.parentNode.removeChild(block);
 }
 
-document.getElementById('skillButton1').addEventListener('click', () => useSkill(1));
-document.getElementById('skillButton2').addEventListener('click', () => useSkill(2));
-document.getElementById('skillButton3').addEventListener('click', () => useSkill(3));
+document.getElementById('skillButton1').addEventListener('click', () => {
+  if (!activeSkill) {
+    activeSkill = 1;
+    useSkill(1);
+  }
+});
+
+document.getElementById('skillButton2').addEventListener('click', () => {
+  if (!activeSkill) {
+    activeSkill = 2;
+    useSkill(2);
+  }
+});
+
+document.getElementById('skillButton3').addEventListener('click', () => {
+  if (!activeSkill) {
+    activeSkill = 3;
+    useSkill(3);
+  }
+});
+
+
 
 function useSkill(skillNumber) {
   const skillFramesOverlay = document.getElementById('skillFramesOverlay');
@@ -295,15 +320,20 @@ function useSkill(skillNumber) {
            updateSkillButtonVisibility();
           decreaseYellowFill(30);
           removeEnemies(10);
+           skillUsed1 = false;
         } else if (skillNumber === 2) {
            updateSkillButtonVisibility();
           decreaseYellowFill(70);
           removeEnemies(15);
+           skillUsed2 = false;
         } else if (skillNumber === 3) {
            updateSkillButtonVisibility();
           decreaseYellowFill(100);
           removeAllEnemies();
+           skillUsed3 = false;
         }
+        
+         activeSkill = null;
 updateSkillButtonVisibility();
    
         
