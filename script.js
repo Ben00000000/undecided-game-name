@@ -11,10 +11,7 @@ let skillUsed1 = false;
 let skillUsed2 = false;
 let skillUsed3 = false;
 let activeSkill = null;
-
-
-
-
+let canEnemyDamagePlayer = false;
 
 const idleSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/Idle_2.png';
 const runSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/Run.png';
@@ -66,6 +63,11 @@ function handleJoystickStart() {
   isJoystickActive = true;
   gameLoop();
   setPlayerSprite(runSpriteURL);
+
+  // Allow enemy to damage player after a delay (e.g., 2 seconds)
+  setTimeout(() => {
+    canEnemyDamagePlayer = true;
+  }, 1000);
 }
 
 function handleJoystickEnd() {
@@ -88,24 +90,24 @@ function createEnemy() {
   const spawnPosition = Math.floor(Math.random() * 4);
 
   switch (spawnPosition) {
-    case 0:
-      enemy.style.top = '0';
-      enemy.style.left = `${Math.random() * window.innerWidth}px`;
-      break;
-    case 1:
-      enemy.style.bottom = '0';
-      enemy.style.left = `${Math.random() * window.innerWidth}px`;
-      break;
-    case 2:
-      enemy.style.left = '0';
-      enemy.style.top = `${Math.random() * window.innerHeight}px`;
-      break;
-    case 3:
-      enemy.style.right = '0';
-      enemy.style.top = `${Math.random() * window.innerHeight}px`;
-      break;
-    default:
-      break;
+  case 0:
+    enemy.style.top = '0';
+    enemy.style.left = `${Math.random() * window.innerWidth}px`;
+    break;
+  case 1:
+    enemy.style.bottom = '0';
+    enemy.style.left = `${Math.random() * window.innerWidth}px`;
+    break;
+  case 2:
+    enemy.style.left = '0';
+    enemy.style.top = `${Math.random() * window.innerHeight}px`;
+    break;
+  case 3:
+    enemy.style.right = '0';
+    enemy.style.top = `${Math.random() * window.innerHeight}px`;
+    break;
+  default:
+    break;
   }
 
   document.body.appendChild(enemy);
@@ -146,28 +148,28 @@ function gameLoop() {
 
     updatePlayerPosition();
     checkBlockCollisions();
-     checkEnemyCollisions();
+    // Check enemy collisions with the player
+    checkEnemyCollisions();
 
-  if (Math.random() < 0.01) {
-    const enemy = createEnemy();
+    if (Math.random() < 0.01) {
+      const enemy = createEnemy();
 
-    function move() {
+      function move() {
         moveEnemyTowardsPlayer(enemy, playerX, playerY);
         requestAnimationFrame(move);
-    }
+      }
 
-    move();
+      move();
 
-    // Add a delay (e.g., 1000 milliseconds) before creating a new enemy
-    setTimeout(function () {
+      // Add a delay (e.g., 1000 milliseconds) before creating a new enemy
+      setTimeout(function () {
         // Call the code to create a new enemy after the delay
         if (Math.random() < 0.01) {
-            const newEnemy = createEnemy();
-            moveEnemyTowardsPlayer(newEnemy, playerX, playerY);
+          const newEnemy = createEnemy();
+          moveEnemyTowardsPlayer(newEnemy, playerX, playerY);
         }
-    }, 5000);
-}
-
+      }, 5000);
+    }
 
     // Increment the timer
     blockSpawnTimer += 16; // Assuming 60 frames per second (1000 ms / 60 frames)
@@ -177,7 +179,7 @@ function gameLoop() {
       createBlock();
       blockSpawnTimer = 0; // Reset the timer
     }
-updateSkillButtonVisibility();
+    updateSkillButtonVisibility();
     updateHPBar();
     requestAnimationFrame(gameLoop);
   }
@@ -203,8 +205,8 @@ function checkEnemyCollisions() {
 }
 
 function handleEnemyCollision() {
-  // Decrease player HP by 1 only if it's not already decreasing
-  if (!isHPDecreasing) {
+  // Decrease player HP by 1 only if it's allowed and not already decreasing
+  if (canEnemyDamagePlayer && !isHPDecreasing) {
     isHPDecreasing = true;
     decreasePlayerHP();
   }
@@ -218,7 +220,7 @@ function decreasePlayerHP() {
       updateHPBar();
     } else {
       clearInterval(hpDecreaseInterval);
-      isHPDecreasing = false;
+      isHPDecreasing = false; // Reset the flag when the interval is cleared
     }
   }, 1000);
 }
@@ -251,6 +253,7 @@ function updateHPBar() {
 
 function gameOver() {
   playerHP = 100;
+  clearInterval(hpDecreaseInterval);
   // Handle game over logic, for example, display a message or reset the game
   // Additional game over actions can be added here
 }
@@ -314,10 +317,6 @@ function increaseYellowFillWidth() {
   }
 }
 
-
-
-
-
 function isCollision(element1, element2, margin = 0) {
   const rect1 = element1.getBoundingClientRect();
   const rect2 = element2.getBoundingClientRect();
@@ -329,7 +328,6 @@ function isCollision(element1, element2, margin = 0) {
     rect1.bottom - margin > rect2.top + margin
   );
 }
-
 
 function removeBlock(block) {
   block.parentNode.removeChild(block);
@@ -355,8 +353,6 @@ document.getElementById('skillButton3').addEventListener('click', () => {
     useSkill(3);
   }
 });
-
-
 
 function useSkill(skillNumber) {
   const skillFramesOverlay = document.getElementById('skillFramesOverlay');
@@ -390,30 +386,28 @@ function useSkill(skillNumber) {
       setTimeout(() => {
         skillFramesOverlay.style.display = 'none';
 
-   
-       updateSkillButtonVisibility();
+        updateSkillButtonVisibility();
         // Handle skill effects based on the skill number
         if (skillNumber === 1) {
-           updateSkillButtonVisibility();
+          updateSkillButtonVisibility();
           decreaseYellowFill(30);
           removeEnemies(10);
-           skillUsed1 = false;
+          skillUsed1 = false;
         } else if (skillNumber === 2) {
-           updateSkillButtonVisibility();
+          updateSkillButtonVisibility();
           decreaseYellowFill(70);
           removeEnemies(15);
-           skillUsed2 = false;
+          skillUsed2 = false;
         } else if (skillNumber === 3) {
-           updateSkillButtonVisibility();
+          updateSkillButtonVisibility();
           decreaseYellowFill(100);
           removeAllEnemies();
-           skillUsed3 = false;
+          skillUsed3 = false;
         }
-        
-         activeSkill = null;
-updateSkillButtonVisibility();
-   
-        
+
+        activeSkill = null;
+        updateSkillButtonVisibility();
+
       }, frameInterval);
     }
   }, frameInterval);
@@ -446,8 +440,6 @@ function updateSkillButtonVisibility() {
     skillButton3.style.display = 'block';
   }
 }
-
-
 
 function decreaseYellowFill(amount) {
   const yellowFill = document.getElementById('yellowFill');
@@ -488,8 +480,7 @@ function updateScoreDisplay() {
   }
 }
 
-
-
+checkEnemyCollisions();
 updateSkillButtonVisibility();
 // To test, call the gameLoop function
 gameLoop();
