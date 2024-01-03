@@ -1,4 +1,3 @@
-const player = document.getElementById('player');
 const joystickZone = document.getElementById('joystick');
 const hpBar = document.getElementById('hpBar');
 let playerX = window.innerWidth / 2;
@@ -11,6 +10,7 @@ let skillUsed1 = false;
 let skillUsed2 = false;
 let skillUsed3 = false;
 let activeSkill = null;
+let isSkillActive = false;
 let canEnemyDamagePlayer = false;
 
 const idleSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/idle100px.png';
@@ -82,10 +82,10 @@ function handleJoystickStart() {
   gameLoop();
   setPlayerSprite(runSpriteURL);
 
-  // Allow enemy to damage player after a delay (e.g., 2 seconds)
-  setTimeout(() => {
+ 
+ 
     canEnemyDamagePlayer = true;
-  }, 1000);
+
 }
 
 function handleJoystickEnd() {
@@ -156,6 +156,7 @@ function createEnemy(direction) {
 }
 
 function moveEnemyTowardsPlayer(enemy, playerX, playerY) {
+   if (!isGameOver) {
   const enemyX = parseFloat(enemy.style.left) || 0;
   const enemyY = parseFloat(enemy.style.top) || 0;
 
@@ -194,6 +195,7 @@ function moveEnemyTowardsPlayer(enemy, playerX, playerY) {
        enemy.style.height = '48px';
     }
   }
+   }
 }
 
 // ...
@@ -260,7 +262,7 @@ function checkEnemyCollisions() {
   let isColliding = false;
 
   enemies.forEach((enemy) => {
-    if (isCollision(player, enemy, 10)) {
+    if (isCollision(player, enemy, -10)) {
       isColliding = true;
     }
   });
@@ -274,12 +276,13 @@ function checkEnemyCollisions() {
 }
 
 function handleEnemyCollision() {
-  // Decrease player HP by 1 only if it's allowed and not already decreasing
-  if (canEnemyDamagePlayer && !isHPDecreasing) {
+  // Decrease player HP only if it's allowed, not already decreasing, and no skill is active
+  if (canEnemyDamagePlayer && !isHPDecreasing && !isSkillActive) {
     isHPDecreasing = true;
     decreasePlayerHP();
   }
 }
+
 
 function decreasePlayerHP() {
   // Decrease player HP by 1 every second
@@ -320,12 +323,46 @@ function updateHPBar() {
   }
 }
 
+let isGameOver = false; // Add a flag to track game over state
+
 function gameOver() {
-  playerHP = 100;
-  clearInterval(hpDecreaseInterval);
-  // Handle game over logic, for example, display a message or reset the game
-  // Additional game over actions can be added here
+   
+  // Display the game over screen
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  scoreDisplay.textContent = `Score: ${score}`;
+  gameOverScreen.style.display = 'flex'; // Assuming you want to use flex for centering
+
+  // Stop the game loop and enemy movements
+  isJoystickActive = false;
+  isGameOver = true;
 }
+
+// Add an event listener to restart the game when the player clicks the restart button
+document.getElementById('restartButton').addEventListener('click', () => {
+  // Remove all enemies
+  removeAllEnemies();
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  gameOverScreen.style.display = 'none';
+  isJoystickActive = false;
+   playerHP = 100;
+  updateHPBar();
+  
+   // Reset yellow fill to 0
+  const yellowFill = document.getElementById('yellowFill');
+  yellowFill.style.width = '0';
+  
+  // Reset the score and any other game variables
+  score = 0;
+  updateScoreDisplay();
+
+ 
+
+  // Restart the game loop
+  isJoystickActive = true;
+  isGameOver = false;
+  gameLoop();
+});
 
 function createBlock() {
   const block = document.createElement('div');
@@ -437,7 +474,8 @@ function useSkill(skillNumber) {
   }
 
   skillFramesOverlay.style.display = 'block';
-
+isSkillActive = true;
+  
   let currentFrame = 0;
   const frameInterval = 100; // 100 milliseconds interval
 
