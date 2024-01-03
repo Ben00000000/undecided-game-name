@@ -3,6 +3,8 @@ const joystickZone = document.getElementById('joystick');
 let playerX = window.innerWidth / 2;
 let playerY = window.innerHeight / 2;
 let speed = 1;
+let score = 0;
+
 
 
 const idleSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/Idle_2.png';
@@ -119,7 +121,7 @@ function moveEnemyTowardsPlayer(enemy, playerX, playerY) {
 }
 
 let blockSpawnTimer = 0;
-const blockSpawnInterval = 10000; // 1 second in milliseconds
+const blockSpawnInterval = 5000; // 1 second in milliseconds
 
 function gameLoop() {
   if (isJoystickActive) {
@@ -136,14 +138,26 @@ function gameLoop() {
     updatePlayerPosition();
     checkBlockCollisions();
 
-    if (Math.random() < 0.01) {
-      const enemy = createEnemy();
-      function move() {
+  if (Math.random() < 0.01) {
+    const enemy = createEnemy();
+
+    function move() {
         moveEnemyTowardsPlayer(enemy, playerX, playerY);
         requestAnimationFrame(move);
-      }
-      move();
     }
+
+    move();
+
+    // Add a delay (e.g., 1000 milliseconds) before creating a new enemy
+    setTimeout(function () {
+        // Call the code to create a new enemy after the delay
+        if (Math.random() < 0.01) {
+            const newEnemy = createEnemy();
+            moveEnemyTowardsPlayer(newEnemy, playerX, playerY);
+        }
+    }, 5000);
+}
+
 
     // Increment the timer
     blockSpawnTimer += 16; // Assuming 60 frames per second (1000 ms / 60 frames)
@@ -153,7 +167,7 @@ function gameLoop() {
       createBlock();
       blockSpawnTimer = 0; // Reset the timer
     }
-
+updateSkillButtonVisibility();
     requestAnimationFrame(gameLoop);
   }
 }
@@ -275,7 +289,7 @@ function useSkill(skillNumber) {
         skillFramesOverlay.style.display = 'none';
 
    
-       
+       updateSkillButtonVisibility();
         // Handle skill effects based on the skill number
         if (skillNumber === 1) {
            updateSkillButtonVisibility();
@@ -292,6 +306,7 @@ function useSkill(skillNumber) {
         }
 updateSkillButtonVisibility();
    
+        
       }, frameInterval);
     }
   }, frameInterval);
@@ -351,9 +366,23 @@ function removeAllEnemies() {
 
 function removeEnemy(enemy) {
   enemy.parentNode.removeChild(enemy);
+  increaseScore();
+}
+
+function increaseScore() {
+  score++;
+  updateScoreDisplay();
+}
+
+function updateScoreDisplay() {
+  const scoreDisplay = document.getElementById('scoreDisplay'); // Assuming you have an element with the id 'scoreDisplay' to show the score
+  if (scoreDisplay) {
+    scoreDisplay.textContent = `Score: ${score}`;
+  }
 }
 
 
 
+updateSkillButtonVisibility();
 // To test, call the gameLoop function
 gameLoop();

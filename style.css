@@ -1,7 +1,10 @@
 body, html {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+     touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+      overflow: hidden;
+        user-select: none;
 }
 
 .game-container {
@@ -148,4 +151,12 @@ body, html {
   height: 100%;
   object-fit: contain;
   pointer-events: none; /* Allow clicks to pass through individual frames */
+}
+
+#scoreDisplay {
+  font-size: 20px;
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }

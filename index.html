@@ -12,13 +12,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Free Roaming Game with Joystick</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://unpkg.com/nipplejs"></script>
 </head>
 <body>
   <div class="game-container">
+  <div id="scoreDisplay">Score: 0</div>
+
     <!-- Joystick container -->
     <div class="zone" id="joystick">
       <div class="stick"></div>
