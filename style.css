@@ -1,0 +1,151 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.game-container {
+  width: 100vw;
+  height: 100vh;
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/battlefiled.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+
+#player {
+  position: absolute;
+  width: 128px; /* Individual frame width */
+  height: 128px; /* Individual frame height */
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/Idle_2.png');
+  animation: playerIdle 1s steps(5) infinite;
+  z-index: 1;
+}
+
+@keyframes playerIdle {
+  from { background-position: 0; }
+  to { background-position: -640px; } /* Total sprite width */
+}
+
+#joystick {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#joystick .stick {
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0);
+  border-radius: 50%;
+}
+.enemy {
+  position: absolute;
+  width: 50px; /* Individual frame width */
+  height: 50px; /* Individual frame height */
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/eyeball.png');
+  animation: enemyAnimation 1s steps(4) infinite;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+@keyframes enemyAnimation {
+  from { background-position: 0; }
+  to { background-position: -260px; } /* Total sprite width (260px * 4 frames) */
+}
+
+
+.flipped {
+  transform: scaleX(-1);
+}
+#yellowBar {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 100px;
+  height: 10px;
+  background-color: gray;
+  border: 1px solid #000;
+  overflow: hidden;
+}
+
+#yellowFill {
+  height: 100%;
+  width: 0;
+  background-color: yellow; /* Change this to the color you want for the filled part of the bar */
+}
+.skill-button {
+  padding: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.skill1,
+.skill2,
+.skill3 {
+  position: fixed;
+  bottom: 10px;
+  z-index: 1001;
+   width: 150px; 
+  height: 150px;
+  border-radius: 50%; /* Make the buttons perfect circles */
+  overflow: hidden; /* Ensure content within the circle is visible */
+}
+
+.skill1 {
+  left: 10px;
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/hit1%20(4).png');
+  background-size: cover; /* Adjust as needed to cover the entire button */
+  background-repeat: no-repeat;
+  background-position: center;
+   background-color: transparent;
+}
+
+
+.skill2 {
+  left: 110px;
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/hit2%20(4).png');
+  background-size: cover; /* Adjust as needed to cover the entire button */
+  background-repeat: no-repeat;
+  background-position: center;
+   background-color: transparent;
+}
+
+.skill3 {
+  left: 210px;
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/hit3%20(4).png');
+  background-size: cover; /* Adjust as needed to cover the entire button */
+  background-repeat: no-repeat;
+  background-position: center;
+   background-color: transparent;
+}
+
+#skillFramesOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+  display: none;
+  z-index: 1000; /* Ensure it's above other elements */
+  pointer-events: none; /* Allow clicks to pass through the overlay */
+}
+
+.skill-frame {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none; /* Allow clicks to pass through individual frames */
+}
