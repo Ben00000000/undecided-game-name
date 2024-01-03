@@ -13,8 +13,13 @@ let skillUsed3 = false;
 let activeSkill = null;
 let canEnemyDamagePlayer = false;
 
-const idleSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/Idle_2.png';
-const runSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/Run.png';
+const idleSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/idle100px.png';
+const runSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/right100px.png';
+
+const downSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/doown100px.png';
+
+const upSpriteURL = 'https://raw.githubusercontent.com/Ben00000000/asstes/main/up100px.png';
+
 
 setPlayerSprite(idleSpriteURL);
 
@@ -37,13 +42,6 @@ manager.on('end', handleJoystickEnd);
 function handleJoystickMove(event, nipple) {
   const angle = nipple.angle.radian;
   const moveX = Math.cos(angle) * speed;
-
-  if (moveX > 0) {
-    player.classList.remove('flipped');
-  } else if (moveX < 0) {
-    player.classList.add('flipped');
-  }
-
   const moveY = Math.sin(angle) * speed;
   const invertedMoveY = -moveY;
 
@@ -54,10 +52,30 @@ function handleJoystickMove(event, nipple) {
   playerY = Math.min(Math.max(playerY, 0), window.innerHeight - player.offsetHeight);
 
   updatePlayerPosition();
-  setPlayerSprite(runSpriteURL);
+
+  // Check the direction of movement and set the appropriate sprite
+  if (Math.abs(moveY) > Math.abs(moveX)) {
+    // Moving vertically more than horizontally
+    if (moveY > 0) {
+      // Moving down
+      setPlayerSprite(upSpriteURL);
+    } else {
+      // Moving up
+      setPlayerSprite(downSpriteURL);
+    }
+  } else {
+    // Moving horizontally more than vertically
+    if (moveX > 0) {
+      player.classList.remove('flipped');
+    } else if (moveX < 0) {
+      player.classList.add('flipped');
+    }
+    setPlayerSprite(runSpriteURL);
+  }
 
   joystickAngle = angle;
 }
+
 
 function handleJoystickStart() {
   isJoystickActive = true;
@@ -84,30 +102,52 @@ function updatePlayerPosition() {
   player.style.top = `${playerY}px`;
 }
 
-function createEnemy() {
+// ...
+
+function createEnemy(direction) {
   const enemy = document.createElement('div');
   enemy.className = 'enemy';
+  
+  switch (direction) {
+    case 'up':
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyup1.png')";
+      break;
+    case 'down':
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemydown1.png')";
+      break;
+    case 'left':
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyleft.png')";
+       enemy.style.width = '68px';
+      break;
+    case 'right':
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyright.png')";
+       enemy.style.width = '68px';
+      break;
+    default:
+      break;
+  }
+
   const spawnPosition = Math.floor(Math.random() * 4);
 
   switch (spawnPosition) {
-  case 0:
-    enemy.style.top = '0';
-    enemy.style.left = `${Math.random() * window.innerWidth}px`;
-    break;
-  case 1:
-    enemy.style.bottom = '0';
-    enemy.style.left = `${Math.random() * window.innerWidth}px`;
-    break;
-  case 2:
-    enemy.style.left = '0';
-    enemy.style.top = `${Math.random() * window.innerHeight}px`;
-    break;
-  case 3:
-    enemy.style.right = '0';
-    enemy.style.top = `${Math.random() * window.innerHeight}px`;
-    break;
-  default:
-    break;
+    case 0:
+      enemy.style.top = '0';
+      enemy.style.left = `${Math.random() * window.innerWidth}px`;
+      break;
+    case 1:
+      enemy.style.bottom = '0';
+      enemy.style.left = `${Math.random() * window.innerWidth}px`;
+      break;
+    case 2:
+      enemy.style.left = '0';
+      enemy.style.top = `${Math.random() * window.innerHeight}px`;
+      break;
+    case 3:
+      enemy.style.right = '0';
+      enemy.style.top = `${Math.random() * window.innerHeight}px`;
+      break;
+    default:
+      break;
   }
 
   document.body.appendChild(enemy);
@@ -129,7 +169,36 @@ function moveEnemyTowardsPlayer(enemy, playerX, playerY) {
 
   enemy.style.left = `${enemyX + moveX}px`;
   enemy.style.top = `${enemyY + moveY}px`;
+
+  // Adjust the sprite based on the movement direction
+  if (Math.abs(moveY) > Math.abs(moveX)) {
+    // Moving vertically more than horizontally
+    if (moveY > 0) {
+      // Moving down
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyup1.png')";
+      enemy.style.height = '54px';
+    } else {
+      // Moving up
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemydown1.png')";
+      enemy.style.height = '54px';
+    }
+  } else {
+    // Moving horizontally more than vertically
+    if (moveX > 0) {
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyleft.png')";
+       enemy.style.width = '69px';
+       enemy.style.height = '48px';
+    } else if (moveX < 0) {
+      enemy.style.backgroundImage = "url('https://raw.githubusercontent.com/Ben00000000/asstes/main/enemyright.png')";
+       enemy.style.width = '69px';
+       enemy.style.height = '48px';
+    }
+  }
 }
+
+// ...
+
+
 
 let blockSpawnTimer = 0;
 const blockSpawnInterval = 5000; // 1 second in milliseconds

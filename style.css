@@ -19,16 +19,16 @@ body, html {
 
 #player {
   position: absolute;
-  width: 128px; /* Individual frame width */
-  height: 128px; /* Individual frame height */
-  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/Idle_2.png');
-  animation: playerIdle 1s steps(5) infinite;
+  width: 100px; /* Individual frame width */
+  height: 100px; /* Individual frame height */
+  background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/idle100px.png');
+  animation: playerIdle 0.5s steps(3) infinite;
   z-index: 1;
 }
 
 @keyframes playerIdle {
   from { background-position: 0; }
-  to { background-position: -640px; } /* Total sprite width */
+  to { background-position: -300px; } /* Total sprite width */
 }
 
 #joystick {
@@ -53,17 +53,16 @@ body, html {
 }
 .enemy {
   position: absolute;
-  width: 50px; /* Individual frame width */
-  height: 50px; /* Individual frame height */
+  width: 48px; /* Individual frame width */
+  height: 48px; /* Individual frame height */
   background-image: url('https://raw.githubusercontent.com/Ben00000000/asstes/main/eyeball.png');
   animation: enemyAnimation 1s steps(4) infinite;
-  border-radius: 50%;
   z-index: 2;
 }
 
 @keyframes enemyAnimation {
   from { background-position: 0; }
-  to { background-position: -260px; } /* Total sprite width (260px * 4 frames) */
+  to { background-position: -284px; } /* Total sprite width (260px * 4 frames) */
 }
 
 
