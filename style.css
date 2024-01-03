@@ -79,6 +79,8 @@ body, html {
   background-color: gray;
   border: 1px solid #000;
   overflow: hidden;
+  opacity: 0.5;
+  border-radius: 10px;
 }
 
 #yellowFill {
@@ -168,4 +170,6 @@ body, html {
   width: 100%; /* Adjust the width as needed */
   height: 20px; /* Adjust the height as needed */
   background-color: green; /* Red color for HP bar */
+  opacity: 0.5;
+  border-radius: 10px;
 }

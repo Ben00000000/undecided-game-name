@@ -250,6 +250,7 @@ function updateHPBar() {
 }
 
 function gameOver() {
+  playerHP = 100;
   // Handle game over logic, for example, display a message or reset the game
   // Additional game over actions can be added here
 }
