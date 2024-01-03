@@ -1,7 +1,10 @@
 const player = document.getElementById('player');
 const joystickZone = document.getElementById('joystick');
+const hpBar = document.getElementById('hpBar');
 let playerX = window.innerWidth / 2;
 let playerY = window.innerHeight / 2;
+let playerHP = 100;
+let isHPDecreasing = false;
 let speed = 1;
 let score = 0;
 let skillUsed1 = false;
@@ -143,6 +146,7 @@ function gameLoop() {
 
     updatePlayerPosition();
     checkBlockCollisions();
+     checkEnemyCollisions();
 
   if (Math.random() < 0.01) {
     const enemy = createEnemy();
@@ -174,8 +178,80 @@ function gameLoop() {
       blockSpawnTimer = 0; // Reset the timer
     }
 updateSkillButtonVisibility();
+    updateHPBar();
     requestAnimationFrame(gameLoop);
   }
+}
+
+function checkEnemyCollisions() {
+  const enemies = document.querySelectorAll('.enemy');
+
+  let isColliding = false;
+
+  enemies.forEach((enemy) => {
+    if (isCollision(player, enemy, 10)) {
+      isColliding = true;
+    }
+  });
+
+  if (isColliding) {
+    handleEnemyCollision();
+  } else {
+    // Reset the flag when there is no collision
+    isHPDecreasing = false;
+  }
+}
+
+function handleEnemyCollision() {
+  // Decrease player HP by 1 only if it's not already decreasing
+  if (!isHPDecreasing) {
+    isHPDecreasing = true;
+    decreasePlayerHP();
+  }
+}
+
+function decreasePlayerHP() {
+  // Decrease player HP by 1 every second
+  const hpDecreaseInterval = setInterval(() => {
+    if (playerHP > 0 && isHPDecreasing) {
+      playerHP -= 1;
+      updateHPBar();
+    } else {
+      clearInterval(hpDecreaseInterval);
+      isHPDecreasing = false;
+    }
+  }, 1000);
+}
+
+function updateHPBar() {
+  const hpBar = document.getElementById('hpBar');
+  const maxHP = 100;
+  const greenThreshold = 80;
+  const blueThreshold = 30;
+
+  // Update HP bar width based on player HP
+  hpBar.style.width = `${playerHP}%`;
+
+  // Change color based on HP range
+  if (playerHP >= greenThreshold) {
+    hpBar.style.backgroundColor = 'green';
+  } else if (playerHP >= blueThreshold) {
+    hpBar.style.backgroundColor = 'blue';
+  } else {
+    hpBar.style.backgroundColor = 'red';
+  }
+
+  // You can also add visual effects or additional styling based on the color if needed
+
+  // Check if player HP is zero and handle game over logic
+  if (playerHP <= 0) {
+    gameOver();
+  }
+}
+
+function gameOver() {
+  // Handle game over logic, for example, display a message or reset the game
+  // Additional game over actions can be added here
 }
 
 function createBlock() {

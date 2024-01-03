@@ -160,3 +160,12 @@ body, html {
   top: 10px;
   right: 10px;
 }
+#hpBar {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%; /* Adjust the width as needed */
+  height: 20px; /* Adjust the height as needed */
+  background-color: green; /* Red color for HP bar */
+}
